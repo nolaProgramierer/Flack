@@ -1,21 +1,59 @@
 {% extends "layout.html" %}
 {% block body %}
-<h2>Project 2: TODO</h2>
-<div>
-  <form id="user-form">
-    <input id="user-name" autocomplete="off" autofocus placeholder="Enter user name" type="text">
-    <input type="submit">
-  </form>
-  <p>The current user is:</p>
-  <div id="current-user">
+<h2 class="text-center">Flack</h2>
+
+  <div class="row">
+    <div class="col-6">
+      <form id="user-form">
+        <div class="form-group">
+          <label for="user-name">User name</label>
+          <input id="user-name" autocomplete="off" autofocus placeholder="Enter user name" type="text">
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div>
+    <div class="col-6">
+      <h6 class="text-center">Channel messages</h6>
+      <div id="channel-message-list">
+        <ul>
+        </ul>
+      </div>
+    </div>
   </div>
-  <div id="channel-list">
-    <h6>Please choose channel or create one of your choosing</h6>
-    <form id="channel-form">
-      <input id="channel-name" autocomplete="off" autofocus placeholder="Channel name" type="text">
-      <input type="submit">
-    </form>
-    <ul id="channel-item">
-    </ul>
+
+  <div class="row">
+    <p>The current user is:</p>
+    <!--JS added channel below-->
+    <div id="current-user">
+    </div>
   </div>
+
+    <div class="row">
+      <div class="col-6" id="channel-list">
+        <form id="channel-form">
+          <div class="form-group">
+            <label for="user-name">Start a new channel</label>
+            <input id="channel-name" autocomplete="off" autofocus placeholder="Channel name" type="text">
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
+      </div>
+      <div class="col-6">
+        <form id="message-form">
+          <div class="form-group">
+            <label for="message">Write your message</label>
+            <textarea class="form-control rows="3" id="message" autocomplete="off" autofocus></textarea>
+            <button type="submit" class="btn btn-info">Send message</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-6">
+        <ul id="channel-item">
+        </ul>
+      </div>
+    </div>
+
 {% endblock %}
