@@ -1,0 +1,17 @@
+/* Empty class for added channel items */
+.channel {
+
+}
+/* List item styling */
+ul li {
+  cursor: pointer;
+  background: #F5F5F5;
+}
+/* Every other field set to a different backgrojund color */
+ul li:nth-child(odd) {
+  background: #DCDCDC;
+}
+ul li:hover {
+  background: #D3D3D3;
+  text-decoration: underline;
+}
