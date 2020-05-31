@@ -15,3 +15,11 @@ ul li:hover {
   background: #D3D3D3;
   text-decoration: underline;
 }
+#current-user {
+  font-size: 1.5rem;
+}
+#change-user {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-size: 1.25rem;
+}
