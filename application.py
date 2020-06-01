@@ -17,3 +17,8 @@ def index():
 def channel(data):
     channel = data["channel"]
     emit("announce channel", {"channel": channel}, broadcast=True)
+
+@socketio.on("select channel")
+def selectChannel(data):
+    selection = data["channel"]
+    emit("announce ch selection", {"selection": selection}, broadcast=True)

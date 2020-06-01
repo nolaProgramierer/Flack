@@ -41,7 +41,26 @@ document.addEventListener('DOMContentLoaded', function() {
     const li = document.createElement('li');
     li.setAttribute('class', 'channel');
     li.innerHTML = `Channel added: ${data.channel}`;
+    li.setAttribute('data-channel', `${data.channel}`);
     document.querySelector('#channel-item').append(li);
+    return false;
+  });
+
+  // Add channel selection to broadcast
+  socket.on('connect', () => {
+    document.querySelectorAll('.channel').forEach(channel => {
+      channel.onclick = () => {
+        const selection = channel.dataset.value
+        
+        socket.emit('select channel', {'selection': selection});
+        return false;
+      };
+    });
+  });
+
+  // From the server update the clients with the channel and HJTML
+  socket.on('announce ch selection', data => {
+    document.querySelector('#selected-channel').innerHTML = `Selected channel: ${data.selection}`;
     return false;
   });
 
