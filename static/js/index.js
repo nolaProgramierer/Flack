@@ -50,8 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
   socket.on('connect', () => {
     document.querySelectorAll('.channel').forEach(channel => {
       channel.onclick = () => {
-        const selection = channel.dataset.value
-        
+        const selection = channel.dataset.channel;
         socket.emit('select channel', {'selection': selection});
         return false;
       };
@@ -60,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // From the server update the clients with the channel and HJTML
   socket.on('announce ch selection', data => {
-    document.querySelector('#selected-channel').innerHTML = `Selected channel: ${data.selection}`;
+    document.querySelector('#selected-channel').innerHTML = `Select channel: ${data.selection}`;
     return false;
   });
 

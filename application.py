@@ -20,5 +20,5 @@ def channel(data):
 
 @socketio.on("select channel")
 def selectChannel(data):
-    selection = data["channel"]
+    selection = data["selection"]
     emit("announce ch selection", {"selection": selection}, broadcast=True)
