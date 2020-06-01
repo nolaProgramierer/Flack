@@ -25,22 +25,27 @@ document.addEventListener('DOMContentLoaded', function() {
         return false;
     }
   }
-  //Add new channels
-  document.querySelector('#channel-form').onsubmit = function() {
-    const li = document.createElement('li');
-    li.setAttribute('class', 'channel')
-    li.innerHTML = document.querySelector('#channel-name').value;
-    document.querySelector('#channel-item').append(li);
-    document.querySelector('#channel-name').value = '';
-    // make channels clickable; break out into separate function
-    var listChannels = document.getElementsByClassName('channel');
-    for (var i = 0; i < listChannels.length; i++) {
-      listChannels[i].addEventListener('click', function() {
-        // go to channel messages
-        alert("Listchannel alert")
-      });
-    }
-    return false;
-  };
 
-});
+  // Event to add channel to the Python server
+  var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+  socket.on('connect', () => {
+    document.querySelector('#channel-form').onsubmit = () => {
+      const ch = document.querySelector('#channel-name').value;
+      socket.emit('submit channel', {'channel': ch});
+      document.querySelector('#channel-name').value = '';
+      return false;
+    }
+  });
+  // From the server the clients are updated with the data and HTML
+  socket.on('announce channel', data => {
+    const li = document.createElement('li');
+    li.setAttribute('class', 'channel');
+    li.innerHTML = `Channel added: ${data.channel}`;
+    document.querySelector('#channel-item').append(li);
+    return false;
+  });
+
+
+
+
+}); //End DOMContentLoaded
