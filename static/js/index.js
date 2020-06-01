@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  // Event to add channel to the Python server
+  // Event to add channel sent to the Python server
   var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
   socket.on('connect', () => {
     document.querySelector('#channel-form').onsubmit = () => {
@@ -36,17 +36,25 @@ document.addEventListener('DOMContentLoaded', function() {
       return false;
     }
   });
-  // From the server the clients are updated with the data and HTML
+  // Server updates the channel listing
   socket.on('announce channel', data => {
     const li = document.createElement('li');
     li.setAttribute('class', 'channel');
     li.innerHTML = `Channel added: ${data.channel}`;
     li.setAttribute('data-channel', `${data.channel}`);
     document.querySelector('#channel-item').append(li);
+    // Add addEventListener for click function for channel selection broadcast
+    document.querySelectorAll('.channel').forEach(channel => {
+      channel.onclick = () => {
+        const selection = channel.dataset.channel;
+        socket.emit('select channel', {'selection': selection});
+        return false;
+      };
+    });
     return false;
   });
 
-  // Add channel selection to broadcast
+  // Onclick channel selection is broadcast for hard-coded channels
   socket.on('connect', () => {
     document.querySelectorAll('.channel').forEach(channel => {
       channel.onclick = () => {
@@ -57,9 +65,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // From the server update the clients with the channel and HJTML
+  // From server, channel added to 'Channel messages' selection
   socket.on('announce ch selection', data => {
-    document.querySelector('#selected-channel').innerHTML = `Select channel: ${data.selection}`;
+    document.querySelector('#selected-channel').innerHTML = `Selected channel: ${data.selection}`;
     return false;
   });
 
