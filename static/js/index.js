@@ -26,24 +26,37 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  // Event to add channel sent to the Python server
+  // Connection code for socket.io
   var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+
+  // To server; add channel to 'Channels' on form submit
   socket.on('connect', () => {
     document.querySelector('#channel-form').onsubmit = () => {
-      const ch = document.querySelector('#channel-name').value;
-      socket.emit('submit channel', {'channel': ch});
-      document.querySelector('#channel-name').value = '';
-      return false;
+      const ch = document.querySelector('#channel-name').value
+      // From MDN web docs
+      let match = document.querySelector(`li[data-channel=${ch}]`);
+      if (match) {
+        alert(`The channel ${ch} already exists.`);
+        document.querySelector('#channel-name').value = '';
+        return false;
+      }
+      else {
+        socket.emit('submit channel', {'channel': ch});
+        document.querySelector('#channel-name').value = '';
+        return false;
+      }
     }
   });
-  // Server updates the channel listing
+  // From server; update the channel listing
   socket.on('announce channel', data => {
+
+
     const li = document.createElement('li');
     li.setAttribute('class', 'channel');
-    li.innerHTML = `Channel added: ${data.channel}`;
+    li.innerHTML = data.channel;
     li.setAttribute('data-channel', `${data.channel}`);
     document.querySelector('#channel-item').append(li);
-    // Add addEventListener for click function for channel selection broadcast
+    // Add addEventListener for click function for newly added channel
     document.querySelectorAll('.channel').forEach(channel => {
       channel.onclick = () => {
         const selection = channel.dataset.channel;
