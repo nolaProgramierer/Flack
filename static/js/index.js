@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
   socket.on('connect', () => {
     document.querySelector('#channel-form').onsubmit = () => {
       const ch = document.querySelector('#channel-name').value
-      // From MDN web docs
+      // Check for duplicate channel
       let match = document.querySelector(`li[data-channel=${ch}]`);
       if (match) {
         alert(`The channel ${ch} already exists.`);
