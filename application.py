@@ -1,5 +1,6 @@
 import os
-import requests, datetime
+import requests
+import datetime
 
 from flask import Flask, request, render_template, jsonify, json
 from flask_socketio import SocketIO, emit
@@ -29,6 +30,7 @@ def message(data):
     channel = data["channel"]
     message = data["message"]
     name = data["name"]
-    data = {channel: [{"name": name, "message": message}]}
+    message_date = datetime.datetime.now()
+    data = {channel: [{"name": name, "message": message, "datetime": message_date}]}
     dict = json.dumps({"flack" : data})
     emit("announce message", {"dict": dict}, broadcast=True)
