@@ -80,10 +80,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // From server, channel added to 'Channel messages' selection
   socket.on('announce ch selection', data => {
-    document.querySelector('#selected-channel').innerHTML = `Selected channel: ${data.selection}`;
+    document.querySelector('#selected-channel').innerHTML = data.selection;
     return false;
   });
 
+  // From client; gather message and channel and send to server
+  socket.on('connect', () => {
+    document.querySelector('#message-form').onsubmit = () => {
+      const message = document.querySelector('#message').value;
+      const channel = document.querySelector('#selected-channel').innerHTML;
+      const name = localStorage.getItem('name');
+      socket.emit('submit message', {'message': message, 'channel': channel, 'name': name});
+      document.querySelector('#message').value = '';
+      return false;
+    };
+  });
+
+  // From server, message added to messages list
+  socket.on('announce message', data => {
+
+    console.log(data.dict);
+
+
+    return false;
+
+  });
 
 
 

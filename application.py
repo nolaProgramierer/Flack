@@ -1,12 +1,13 @@
 import os
-import requests
+import requests, datetime
 
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, render_template, jsonify, json
 from flask_socketio import SocketIO, emit
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 socketio = SocketIO(app)
+
 
 
 @app.route("/")
@@ -22,3 +23,12 @@ def channel(data):
 def selectChannel(data):
     selection = data["selection"]
     emit("announce ch selection", {"selection": selection}, broadcast=True)
+
+@socketio.on("submit message")
+def message(data):
+    channel = data["channel"]
+    message = data["message"]
+    name = data["name"]
+    data = {channel: [{"name": name, "message": message}]}
+    dict = json.dumps({"flack" : data})
+    emit("announce message", {"dict": dict}, broadcast=True)
