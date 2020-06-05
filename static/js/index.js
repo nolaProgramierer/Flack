@@ -98,8 +98,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // From server, message added to messages list
   socket.on('announce message', data => {
+    flackDict = data.dict;
+    obj = JSON.parse(flackDict);
 
-    console.log(data.dict);
+    const li = document.createElement('li');
+    li.setAttribute('class', 'message');
+    li.innerHTML = obj.flack.General[0].message;
+    //li.setAttribute('data-channel', `${data.channel}`);
+    document.querySelector('#message-list-item').append(li);
+
+    console.log(obj.flack.General[0]);
+
 
 
     return false;
