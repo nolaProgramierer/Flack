@@ -9,6 +9,8 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 socketio = SocketIO(app)
 
+flack = {}
+
 @app.route("/")
 def index():
     return render_template("/index.html")
@@ -29,6 +31,16 @@ def message(data):
     message = data["message"]
     name = data["name"]
     message_date = datetime.datetime.now()
-    data = {channel: [{"name": name, "message": message, "datetime": message_date}]}
-    dict = json.dumps({"flack" : data})
-    emit("announce message", {"dict": dict}, broadcast=True)
+    data = {"name": name, "message": message, "datetime": message_date}
+
+    # If channel exists append data to existing channel array
+    # Else add new dictionary to 'flack'
+    key = channel
+    if key in flack.keys():
+        flack[channel].append(data)
+    else:
+        flack[channel] = []
+        flack[channel].append(data)
+
+    dict = json.dumps(flack)
+    emit("announce message", {"dict": dict, "channel": channel}, broadcast=True)

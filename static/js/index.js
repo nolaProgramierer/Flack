@@ -98,18 +98,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // From server, message added to messages list
   socket.on('announce message', data => {
-    flackDict = data.dict;
-    obj = JSON.parse(flackDict);
+    var flack = data.dict;
+    var obj = JSON.parse(flack);
+    // Add only the messages to the message list which have the key corresponding
+    // to the selected channel in the HTML
+    var key = data.channel;
+    var channelName = document.querySelector('#selected-channel').innerHTML;
+    // Loop through object at channel name keys returning the values of the array nested objects
+    // by matching the selected HTML channel with the channel from channel from the data object
+    if (key == channelName) {
+      for (var i in obj[key]) {
+        const row = document.createElement('tr');
+        document.querySelector('tbody').append(row);
+        console.log(obj[key][i])
+        //const li = document.createElement('li');
+          for (var j in obj[key][i]) {
+            const td = document.createElement('td');
+            td.innerHTML = obj[key][i][j]
+            document.querySelector('tbody > tr').append(td);
+            console.log(obj[key][i][j])
+          }
 
-    const li = document.createElement('li');
-    li.setAttribute('class', 'message');
-    li.innerHTML = obj.flack.General[0].message;
-    //li.setAttribute('data-channel', `${data.channel}`);
-    document.querySelector('#message-list-item').append(li);
 
-    console.log(obj.flack.General[0]);
+      }
 
-
+    };
 
     return false;
 
