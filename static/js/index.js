@@ -108,17 +108,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // by matching the selected HTML channel with the channel from channel from the data object
     if (key == channelName) {
       for (var i in obj[key]) {
-        const row = document.createElement('tr');
-        document.querySelector('tbody').append(row);
-        console.log(obj[key][i])
-        //const li = document.createElement('li');
-          for (var j in obj[key][i]) {
-            const td = document.createElement('td');
-            td.innerHTML = obj[key][i][j]
-            document.querySelector('tbody > tr').append(td);
-            console.log(obj[key][i][j])
-          }
-
+        console.log(obj[key][i]);
+        for (var j in obj[key][i]) {
+          console.log(obj[key][i][j]);
+        }
 
       }
 
