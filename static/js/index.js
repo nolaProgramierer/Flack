@@ -107,20 +107,25 @@ document.addEventListener('DOMContentLoaded', function() {
     // Loop through object at channel name keys returning the values of the array nested objects
     // by matching the selected HTML channel with the channel from channel from the data object
     if (key == channelName) {
+      var tb = document.querySelector('tbody');
       for (var i in obj[key]) {
+        var currRow = document.createElement('tr');
         console.log(obj[key][i]);
         for (var j in obj[key][i]) {
+          var currCell = document.createElement('td');
+          currCell.textContent = obj[key][i][j];
+          currRow.appendChild(currCell);
           console.log(obj[key][i][j]);
         }
-
+      tb.appendChild(currRow);
       }
-
     };
-
     return false;
-
   });
 
 
 
 }); //End DOMContentLoaded
+function makeTable() {
+  
+}
