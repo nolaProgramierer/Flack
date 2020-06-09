@@ -9,7 +9,7 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 socketio = SocketIO(app)
 
-flack = {}
+flack = {"General": [{"name": "admin", "message": "Messages for admin", "datetime": ""}]}
 
 @app.route("/")
 def index():
@@ -23,7 +23,14 @@ def channel(data):
 @socketio.on("select channel")
 def selectChannel(data):
     selection = data["selection"]
-    emit("announce ch selection", {"selection": selection}, broadcast=True)
+    flack[selection] = []
+    default_message = "{} channel".format(selection)
+    name = data["name"]
+    message_date = datetime.datetime.now()
+    data = {"name": name, "message": default_message, "datetime": message_date}
+    flack[selection].append(data)
+    dict = json.dumps(flack)
+    emit("announce ch selection", {"dict": dict, "channel": selection}, broadcast=True)
 
 @socketio.on("submit message")
 def message(data):

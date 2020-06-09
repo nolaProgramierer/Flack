@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Connection code for socket.io
   var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 
-  // To server; add channel to 'Channels' on form submit
+  // Semd channel name to server
   socket.on('connect', () => {
     document.querySelector('#channel-form').onsubmit = () => {
       const ch = document.querySelector('#channel-name').value
@@ -47,20 +47,21 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
   });
-  // From server; update the channel listing
+  // Receive channel name from server
   socket.on('announce channel', data => {
-
-
+    // Add channel to client channel list
     const li = document.createElement('li');
     li.setAttribute('class', 'channel');
     li.innerHTML = data.channel;
     li.setAttribute('data-channel', `${data.channel}`);
     document.querySelector('#channel-item').append(li);
     // Add addEventListener for click function for newly added channel
+
+    const name = localStorage.getItem('name')
     document.querySelectorAll('.channel').forEach(channel => {
       channel.onclick = () => {
         const selection = channel.dataset.channel;
-        socket.emit('select channel', {'selection': selection});
+        socket.emit('select channel', {'selection': selection, 'name': name});
         return false;
       };
     });
@@ -78,9 +79,30 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // From server, channel added to 'Channel messages' selection
+  // Receive data obj from server with added channel and default values
+  // Display default values in client channel listing
   socket.on('announce ch selection', data => {
-    document.querySelector('#selected-channel').innerHTML = data.selection;
+    document.querySelector('#selected-channel').innerHTML = data.channel;
+    var flack = data.dict
+    var obj = JSON.parse(flack);
+    var key = data.channel;
+    var channelName = document.querySelector('#selected-channel').innerHTML;
+
+    if (key == channelName) {
+      var tb = document.querySelector('tbody');
+      for (var i in obj[key]) {
+        var currRow = document.createElement('tr');
+        console.log(obj[key][i]);
+        for (var j in obj[key][i]) {
+          var currCell = document.createElement('td');
+          currCell.textContent = obj[key][i][j];
+          currRow.appendChild(currCell);
+          console.log(obj[key][i][j]);
+        }
+      tb.appendChild(currRow);
+      }
+    };
+
     return false;
   });
 
@@ -127,5 +149,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
 }); //End DOMContentLoaded
 function makeTable() {
-  
+
 }
