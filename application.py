@@ -24,7 +24,7 @@ def channel(data):
 def selectChannel(data):
     selection = data["selection"]
     flack[selection] = []
-    default_message = "{} channel".format(selection)
+    default_message = "{} channel created".format(selection)
     name = data["name"]
     message_date = datetime.datetime.now()
     data = {"name": name, "message": default_message, "datetime": message_date}
@@ -40,14 +40,11 @@ def message(data):
     message_date = datetime.datetime.now()
     data = {"name": name, "message": message, "datetime": message_date}
 
-    # If channel exists append data to existing channel array
-    # Else add new dictionary to 'flack'
-    key = channel
-    if key in flack.keys():
-        flack[channel].append(data)
-    else:
-        flack[channel] = []
-        flack[channel].append(data)
+    # If channel exists append data to existing channel obj array
+    # Add new channel obj with message to object
+
+    flack[channel].append(data)
+
 
     dict = json.dumps(flack)
     emit("announce message", {"dict": dict, "channel": channel}, broadcast=True)
