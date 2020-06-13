@@ -20,17 +20,10 @@ def channel(data):
     channel = data["channel"]
     emit("announce channel", {"channel": channel}, broadcast=True)
 
-@socketio.on("select channel")
-def selectChannel(data):
-    selection = data["selection"]
-    flack[selection] = []
-    default_message = "{} channel created".format(selection)
-    name = data["name"]
-    message_date = datetime.datetime.now()
-    data = {"name": name, "message": default_message, "datetime": message_date}
-    flack[selection].append(data)
-    dict = json.dumps(flack)
-    emit("announce ch selection", {"dict": dict, "channel": selection}, broadcast=True)
+@socketio.on("channel selection")
+def sendChannel(data):
+    channel = data["selection"]
+    emit("send channel message", {"channel": channel})
 
 @socketio.on("submit message")
 def message(data):
@@ -39,12 +32,10 @@ def message(data):
     name = data["name"]
     message_date = datetime.datetime.now()
     data = {"name": name, "message": message, "datetime": message_date}
-
-    # If channel exists append data to existing channel obj array
-    # Add new channel obj with message to object
-
-    flack[channel].append(data)
-
-
+    if not channel in flack :
+        flack[channel] = []
+        flack[channel].append(data)
+    else:
+        flack[channel].append(data)
     dict = json.dumps(flack)
-    emit("announce message", {"dict": dict, "channel": channel}, broadcast=True)
+    emit("announce message", {"channel": channel, "dict": dict}, broadcast=True)

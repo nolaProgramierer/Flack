@@ -55,83 +55,51 @@ document.addEventListener('DOMContentLoaded', function() {
     li.innerHTML = data.channel;
     li.setAttribute('data-channel', `${data.channel}`);
     document.querySelector('#channel-item').append(li);
-    // Add addEventListener for click function for newly added channel
-
-    const name = localStorage.getItem('name')
-    document.querySelectorAll('.channel').forEach(channel => {
-      channel.onclick = () => {
-        const selection = channel.dataset.channel;
-        socket.emit('select channel', {'selection': selection, 'name': name});
-        return false;
-      };
-    });
+    document.querySelector('#selected-channel').innerHTML = data.channel;
+    selection = data.channel
+    socket.emit('channel selection', {'selection': selection});
     return false;
   });
 
-  // Event listener for click on each channel
-  socket.on('connect', () => {
-    document.querySelectorAll('.channel').forEach(channel => {
-      channel.onclick = () => {
-        const selection = channel.dataset.channel;
-        const name = localStorage.getItem('name')
-        socket.emit('select channel', {'selection': selection, 'name': name});
-        return false;
-      };
-    });
-  });
+
 
   // Receive data obj from server with added channel and default values
   // Display default values in client channel listing
   socket.on('announce ch selection', data => {
     document.querySelector('#selected-channel').innerHTML = data.channel;
-    document.querySelector('#table-content').innerHTML = '';
-    var flack = data.dict
-    var obj = JSON.parse(flack);
-    var key = data.channel;
-    var channelName = document.querySelector('#selected-channel').innerHTML;
-    var tb = document.querySelector('tbody');
+    socket.emit('channel selection', {'data': data, 'selection': data.channel});
 
-    // Show all messages in the selected channel key
-
-
-    for (var i in obj[key]) {
-      var currRow = document.createElement('tr');
-      console.log(obj);
-      console.log(Object.keys(obj));
-      console.log(obj[key]);
-      console.log(obj[key][i]);
-      for (var j in obj[key][i]) {
-        var currCell = document.createElement('td');
-        currCell.textContent = obj[key][i][j];
-        currRow.appendChild(currCell);
-        console.log(obj[key][i][j]);
-      }
-    tb.appendChild(currRow);
-    }
 
     return false;
   });
 
   // From client; gather message and channel and send to server
-  socket.on('connect', () => {
+  socket.on('send channel message', data => {
+    console.log(data.channel);
+    var channel = data.channel;
     document.querySelector('#message-form').onsubmit = () => {
       const message = document.querySelector('#message').value;
-      const channel = document.querySelector('#selected-channel').innerHTML;
+      //const channel = document.querySelector('#selected-channel').innerHTML;
       const name = localStorage.getItem('name');
       socket.emit('submit message', {'message': message, 'channel': channel, 'name': name});
       document.querySelector('#message').value = '';
       return false;
     };
+    return false;
   });
 
   // From server, message added to messages list
   socket.on('announce message', data => {
+    console.log(data.dict);
+
     var flack = data.dict;
     var obj = JSON.parse(flack);
+    console.log(obj);
     // Add only the messages to the message list which have the key corresponding
     // to the selected channel in the HTML
     var key = data.channel;
     var channelName = document.querySelector('#selected-channel').innerHTML;
+
     // Loop through object at channel name keys returning the values of the array nested objects
     // by matching the selected HTML channel with the channel from channel from the data object
     document.querySelector('tbody').innerHTML = '';
