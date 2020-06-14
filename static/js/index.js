@@ -55,7 +55,15 @@ document.addEventListener('DOMContentLoaded', function() {
     li.innerHTML = data.channel;
     li.setAttribute('data-channel', `${data.channel}`);
     document.querySelector('#channel-item').append(li);
-    document.querySelector('#selected-channel').innerHTML = data.channel;
+  // Add event handler for each channel, onclick display messages for each channel
+    document.querySelectorAll('.channel').forEach(ch => {
+      ch.onclick = (evt) => {
+        console.log(evt.currentTarget.innerHTML);
+        let key = evt.currentTarget.innerHTML;
+        displayChannelMessage(key);
+      }
+    });
+
     selection = data.channel
     socket.emit('channel selection', {'selection': selection});
     return false;
@@ -75,11 +83,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // From client; gather message and channel and send to server
   socket.on('send channel message', data => {
-    console.log(data.channel);
     var channel = data.channel;
     document.querySelector('#message-form').onsubmit = () => {
       const message = document.querySelector('#message').value;
-      //const channel = document.querySelector('#selected-channel').innerHTML;
       const name = localStorage.getItem('name');
       socket.emit('submit message', {'message': message, 'channel': channel, 'name': name});
       document.querySelector('#message').value = '';
@@ -90,20 +96,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // From server, message added to messages list
   socket.on('announce message', data => {
-    console.log(data.dict);
-
     var flack = data.dict;
     var obj = JSON.parse(flack);
-    console.log(obj);
+    // Add flack object as string to localStorage
+    localStorage.setItem('flack', JSON.stringify(obj));
     // Add only the messages to the message list which have the key corresponding
     // to the selected channel in the HTML
     var key = data.channel;
-    var channelName = document.querySelector('#selected-channel').innerHTML;
-
+    //var channelName = document.querySelector('#selected-channel').innerHTML;
     // Loop through object at channel name keys returning the values of the array nested objects
     // by matching the selected HTML channel with the channel from channel from the data object
+
     document.querySelector('tbody').innerHTML = '';
-    if (key == channelName) {
       var tb = document.querySelector('tbody');
       for (var i in obj[key]) {
         var currRow = document.createElement('tr');
@@ -116,13 +120,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       tb.appendChild(currRow);
       }
-    };
     return false;
   });
 
-
-
 }); //End DOMContentLoaded
-function makeTable() {
 
-}
+function displayChannelMessage(key) {
+  console.log("Inside displayChannelMessage function");
+  var obj = JSON.parse(localStorage.getItem('flack'));
+  document.querySelector('tbody').innerHTML = "";
+  var tb = document.querySelector('tbody');
+  for (var i in obj[key]) {
+    var currRow = document.createElement('tr');
+    for (var j in obj[key][i]) {
+      var currCell = document.createElement('td');
+      currCell.textContent = obj[key][i][j];
+      currRow.appendChild(currCell);
+    }
+  tb.appendChild(currRow);
+  }
+  return false;
+};
